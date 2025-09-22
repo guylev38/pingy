@@ -1,0 +1,47 @@
+* {
+    font-family: "Share Tech", sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+:root{
+    /* Primary*/
+    --light-green: #C8FAD6;
+    --white-100: #F9FAFB;
+
+    /* Fonts */
+    --grey-700: #454F5B;
+}
+
+body{
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    gap: 1rem;
+    background-color: var(--light-green);
+}
+
+.sidebar{
+    display: flex;
+    justify-content: center;
+
+    width: 10vw;
+    padding: 20px;
+    height: 100%;
+
+    background-color: var(--white-100);
+    color: var(--grey-700);
+}
+
+.body{
+    display: flex;
+    align-self: center;
+    justify-content: center;
+
+    height: 80%;
+    padding: 25px;
+    width: 50vw;
+    border-radius: 10px;
+
+    background-color: var(--cool-gray);
+}
