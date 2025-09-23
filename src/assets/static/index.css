@@ -12,14 +12,18 @@
     padding: 0;
 }
 
+html{
+    font-size: 62.5%;
+}
+
 :root{
 
     /* Primary*/
-    --lighter-green: #C8FAD6;
-    --light-green: #5BE49B;
-    --main-green: #00A76F;
-    --dark-green: #007867;
-    --darker-green: #004B50;
+    --lighter-blue: #CAFDF5;
+    --light-blue: #61F3F3;
+    --main-blue: #00B8D9;
+    --dark-blue: #006C9C;
+    --darker-blue: #003768;
 
     /* Fonts */
     --grey-100: #F9FAFB;
@@ -31,20 +35,39 @@ body{
     flex-direction: row;
     height: 100vh;
     gap: 20rem;
-    background-color: var(--lighter-green);
+    background-color: var(--lighter-blue);
+}
+
+.title{
+    font-size: 2.5rem;
 }
 
 .sidebar{
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 2em;
 
     width: 10vw;
     padding: 20px;
     height: 100%;
 
-    background-color: var(--dark-green);
+    background-color: var(--dark-blue);
     color: var(--grey-100);
+}
+
+.sidebar-btn{
+    padding: 15px;
+    border-radius: 20px;
+    border: none;
+
+    color: var(--grey-100);
+    background-color: var(--darker-blue);
+}
+
+.sidebar-btn:hover{
+    background-color: var(--main-blue);
+
 }
 
 .devices{
@@ -54,8 +77,6 @@ body{
 
     height: 80%;
     padding: 25px;
-    width: 50vw;
     border-radius: 10px;
-
-    background-color: var(--light-green);
 }
+
