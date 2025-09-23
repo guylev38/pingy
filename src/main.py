@@ -7,7 +7,8 @@ Date: 20/09/2025
 
 # ----- Imports ----- # 
 
-from fastapi import FastAPI, Request
+import uvicorn
+from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -15,8 +16,7 @@ from fastapi.staticfiles import StaticFiles
 # ----- Globals ----- #
 
 app = FastAPI()
-templates = Jinja2Templates(directory=""
-                                      "assets/templates")
+templates = Jinja2Templates(directory="assets/templates")
 
 # ----- Config ----- #
 
@@ -30,3 +30,5 @@ async def root(request: Request):
     context = {"request": request, "message": "Hello!"}
     return templates.TemplateResponse("index.html", context)
 
+if __name__ == "__main__":
+    uvicorn.run(app, reload=True)
