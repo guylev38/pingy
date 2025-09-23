@@ -1,15 +1,28 @@
+/*
+    Stylesheet for the index page.
+    Author: guylev38
+    Date: 22/09/2025
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+
 * {
-    font-family: "Share Tech", sans-serif;
+    font-family: "Roboto Mono", monospace;
     margin: 0;
     padding: 0;
 }
 
 :root{
+
     /* Primary*/
-    --light-green: #C8FAD6;
-    --white-100: #F9FAFB;
+    --lighter-green: #C8FAD6;
+    --light-green: #5BE49B;
+    --main-green: #00A76F;
+    --dark-green: #007867;
+    --darker-green: #004B50;
 
     /* Fonts */
+    --grey-100: #F9FAFB;
     --grey-700: #454F5B;
 }
 
@@ -17,23 +30,24 @@ body{
     display: flex;
     flex-direction: row;
     height: 100vh;
-    gap: 1rem;
-    background-color: var(--light-green);
+    gap: 20rem;
+    background-color: var(--lighter-green);
 }
 
 .sidebar{
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
 
     width: 10vw;
     padding: 20px;
     height: 100%;
 
-    background-color: var(--white-100);
-    color: var(--grey-700);
+    background-color: var(--dark-green);
+    color: var(--grey-100);
 }
 
-.body{
+.devices{
     display: flex;
     align-self: center;
     justify-content: center;
@@ -43,5 +57,5 @@ body{
     width: 50vw;
     border-radius: 10px;
 
-    background-color: var(--cool-gray);
+    background-color: var(--light-green);
 }
