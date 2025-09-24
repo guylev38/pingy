@@ -63,7 +63,7 @@ async def ping_cmd(device_ip: str, timeout: int) -> Union[float | None]:
     return response_time
 
 
-async def ping_device(device_ip: str, timeout: int) -> dict[str, Any]:
+async def ping_device(device_id: str, device_ip: str, timeout: int) -> dict[str, Any]:
     """
     Ping a device and return the following information:
         - Device IP
@@ -71,6 +71,7 @@ async def ping_device(device_ip: str, timeout: int) -> dict[str, Any]:
         - Last Checked
         - Ping MS
 
+    :param device_id: The device's id.
     :param device_ip: The device's IP address.
     :param timeout: Timeout for the ping.
     """
@@ -84,10 +85,12 @@ async def ping_device(device_ip: str, timeout: int) -> dict[str, Any]:
         system_logger.warning(f"Ping request to {device_ip} failed! Device is down!")
 
     result = {
-        "ip": device_ip,
-        "status": "online" if response_time else "offline",
-        "last_checked": time.strftime("%D/%M/%Y - %H:%M:%S"),
-        "ping_ms": round(response_time * 1000, 2) if response_time else None
+        f"{device_id}": {
+            "ip": device_ip,
+            "status": "online" if response_time else "offline",
+            "last_checked": time.strftime("%D/%M/%Y - %H:%M:%S"),
+            "ping_ms": round(response_time * 1000, 2) if response_time else None
+        }
     }  
 
     return result

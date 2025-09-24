@@ -20,4 +20,4 @@ if __name__ == "__main__":
     device_logger.info("Device logger ready!")
     system_logger.info("System logger ready!")
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run("backend.main:app", host="127.0.0.1", port=8000, reload=True)
