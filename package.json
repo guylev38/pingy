@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "@vue/tsconfig": "^0.8.1",
+    "vue-tsc": "^3.0.8"
+  }
+}

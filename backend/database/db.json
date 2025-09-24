@@ -1,0 +1,14 @@
+{
+    "dffa71977e9f0a0e6f0ea6d47e8a17bc": {
+        "ip": "192.168.0.100",
+        "status": "online",
+        "last_checked": "09/24/25/36/2025 - 14:36:26",
+        "ping_ms": 958.0
+    },
+    "f4e4c0ae3ffcc5f281329a6db3665e03": {
+        "ip": "192.168.0.8",
+        "status": "online",
+        "last_checked": "09/24/25/36/2025 - 14:36:26",
+        "ping_ms": 762.0
+    }
+}
