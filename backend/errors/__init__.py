@@ -1,2 +1,2 @@
-from errors.database_errors import *
-from errors.device_errors import *
+from . import database_errors 
+from . import ping_errors

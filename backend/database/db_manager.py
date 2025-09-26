@@ -8,21 +8,18 @@ Date: 24/09/2025
 # ----- Imports ----- #
 
 from typing import Optional
-from pathlib import Path
 
 from pymongo.asynchronous.mongo_client import AsyncMongoClient 
-from pymongo.write_concern import WriteConcern
 from pymongo.errors import DuplicateKeyError
 
 from backend.utils.loggers import system_logger
-from backend.consts import DATABASE_PATH
 from backend.database import AbstractDatabaseManager
 from backend.models import Device
-from backend.errors import (DatabaseManagerAlreadyInitialized, 
-                            DeviceAlreadyExistsError, 
-                            DeviceNotFoundError,
-                            DeviceInsertNotAcknowledged,
-                            DeviceDeleteNotAcknowledged)
+from backend.errors.database_errors import (DatabaseManagerAlreadyInitialized, 
+                                            DeviceAlreadyExistsError, 
+                                            DeviceNotFoundError,
+                                            DeviceInsertNotAcknowledged,
+                                            DeviceDeleteNotAcknowledged)
 
 
 # ----- Consts ----- #
@@ -47,11 +44,11 @@ class DBManager(AbstractDatabaseManager):
         self._collection = self._database[COLLECTION_NAME]
 
 
-    async def insert_devices(self, devices: list[Device]): 
+    async def add_devices(self, devices: list[Device]): 
         for device in devices:
             try:
                 system_logger.info(f"Inserting device {device.ip} to the database...")
-                insert_result = await self._collection.insert_one(device) 
+                insert_result = await self._collection.insert_one(device.model_dump(by_alias=True)) 
             except DuplicateKeyError:
                 system_logger.error(f"Device already exists!")
                 raise DeviceAlreadyExistsError
@@ -63,22 +60,26 @@ class DBManager(AbstractDatabaseManager):
             system_logger.info(f"Device {device.ip} added successfully!")
 
 
-    async def remove_devices(self, devices: list[Device]): 
+    async def delete_devices(self, devices: list[Device]): 
         for device in devices:
-            delete_result = await self._collection.delete_one(device)
+            delete_result = await self._collection.delete_one(device.model_dump(by_alias=True))
 
             if delete_result.deleted_count == 0:
                 system_logger.error(f"Device {device.ip} not found in database!")
                 raise DeviceNotFoundError
-            
+
+            if not delete_result.acknowledged:
+                system_logger.error(f"Database server didn't acknowledge request of device {device.ip}")
+                raise DeviceDeleteNotAcknowledged
+
             system_logger.info(f"Device {device.ip} deleted successfully!")
 
 
     async def update_devices(self, devices: list[Device]): 
         for device in devices: 
-            device_filter = {"_id", device.id} 
+            device_filter = {"_id": device.id}
             system_logger.info(f"Updating device {device.ip} database entry...")
-            update_result = await self._collection.replace_one(device_filter, device)
+            update_result = await self._collection.replace_one(device_filter, device.model_dump(by_alias=True))
 
             if update_result.modified_count == 0:
                 system_logger.error(f"Device {device.ip} not found in database!")
@@ -88,17 +89,19 @@ class DBManager(AbstractDatabaseManager):
 
 
     async def get_devices(self, devices: Optional[list[Device]] = None) -> list[Device]:  
-        if isinstance(devices, None):
-            return list(self._collection.find()) 
-
         queried_devices: list[Device] = []
 
+        if devices is None:
+            async for device in self._collection.find():
+                queried_devices.append(Device(**device))
+            return queried_devices
+
         for device in devices:
-            find_result = self._collection.find_one({"_id", device.id})
-            if isinstance(find_result, None):
+            find_result = self._collection.find_one({"_id": device.id})
+            if find_result is None:
                 system_logger.error(f"Device {device.ip} not found in database") 
                 raise DeviceNotFoundError
 
-            queried_devices.append(find_result)
+            queried_devices.append(Device(**find_result))
 
         return queried_devices

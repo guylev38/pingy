@@ -11,9 +11,15 @@ import enum
 import hashlib
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, ConfigDict, model_validator 
+from bson.objectid import ObjectId
 
-from backend.consts import DeviceStatus
+# ----- Functions ----- #
+
+def hash_ip(ip: str) -> ObjectId:
+    ip_hash = hashlib.md5(ip.encode()).hexdigest()[:24]
+    return ObjectId(ip_hash)
+
 
 # ----- Classes ----- #
 
@@ -24,25 +30,25 @@ class DeviceStatus(enum.Enum):
 
 
 class Device(BaseModel):
-    _id: str = None
     ip: str 
-    status: DeviceStatus = DeviceStatus.OFFLINE
+    status: bool = DeviceStatus.OFFLINE.value
     last_checked: Optional[str] = None
     response_time: Optional[float] = None
-    
+    id: ObjectId = Field(default=None, alias="_id")
+
+    @model_validator(mode="before")
     @classmethod
-    def _hash_ip(cls) -> str:
-        return hashlib.md5(cls.ip.encode()).hexdigest()
-    
+    def compute_id(cls, values):
+        if not values.get("id"):
+            ip = values.get("ip")
+            if ip:
+                values["id"] = hash_ip(ip)
+        return values
 
-    @property
-    def id(cls) -> str:
-        return cls._id
 
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
+        populate_by_name=True,
+        json_encoders={ObjectId: str}
+    )
 
-    @classmethod
-    def from_ip(cls, ip: str, **kwargs):
-        """
-        Factory function to build a device with a hashed _id from IP.
-        """
-        return cls(_id=cls._hash_ip(), ip=ip, **kwargs)

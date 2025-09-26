@@ -1,2 +1,2 @@
-from database.abstract_database_manager import AbstractDatabaseManager
-from backend.database.db_manager import MongoManager
+from backend.database.abstract_database_manager import AbstractDatabaseManager
+from backend.database.db_manager import DBManager

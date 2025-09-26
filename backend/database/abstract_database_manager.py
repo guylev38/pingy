@@ -21,7 +21,7 @@ class AbstractDatabaseManager(abc.ABC):
     """
 
     @abc.abstractmethod
-    async def insert_devices(self, devices: list[Device]): 
+    async def add_devices(self, devices: list[Device]): 
         """
         Insert devices into the database
 
@@ -31,7 +31,7 @@ class AbstractDatabaseManager(abc.ABC):
     
 
     @abc.abstractmethod
-    async def remove_devices(self, devices: list[Device]): 
+    async def delete_devices(self, devices: list[Device]): 
         """
         Remove devices from teh database.
         
