@@ -18,7 +18,7 @@ const theme = ref<GlobalTheme | null>(null)
 
 <template>
   <n-config-provider :theme="theme" style="height: 100%; width: 100%">
-    <n-flex class="app-root" style="height: 100%; width: 100%;">
+    <n-flex class="app-root" :wrap="false" style="height: 100%; width: 100%;">
       <Sidebar></Sidebar>
       <Devices></Devices>
     </n-flex>

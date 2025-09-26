@@ -12,15 +12,8 @@ import time
 from typing import Any, Union
 
 from backend.utils.loggers import (device_logger, system_logger)
-
-# ----- Classes ----- #
-
-
-class PingFailedError(BaseException):
-    pass
-
-class NoResponseTime(BaseException):
-    pass
+from backend.models import (Device, DeviceStatus)
+from backend.errors.ping_errors import (NoResponseTime, PingFailedError)
 
 # ----- Functions ----- #
 
@@ -63,7 +56,7 @@ async def ping_cmd(device_ip: str, timeout: int) -> Union[float | None]:
     return response_time
 
 
-async def ping_device(device_id: str, device_ip: str, timeout: int) -> dict[str, Any]:
+async def ping_device(device_ip: str, timeout: int) -> Device:
     """
     Ping a device and return the following information:
         - Device IP
@@ -71,7 +64,6 @@ async def ping_device(device_id: str, device_ip: str, timeout: int) -> dict[str,
         - Last Checked
         - Ping MS
 
-    :param device_id: The device's id.
     :param device_ip: The device's IP address.
     :param timeout: Timeout for the ping.
     """
@@ -85,13 +77,11 @@ async def ping_device(device_id: str, device_ip: str, timeout: int) -> dict[str,
         system_logger.warning(f"Ping request to {device_ip} failed! Device is down!")
 
     result = {
-        f"{device_id}": {
             "ip": device_ip,
-            "status": "online" if response_time else "offline",
-            "last_checked": time.strftime("%D/%M/%Y - %H:%M:%S"),
-            "ping_ms": round(response_time * 1000, 2) if response_time else None
-        }
-    }  
+            "status": DeviceStatus.ONLINE.value if response_time else DeviceStatus.OFFLINE.value,
+            "last_checked": time.strftime("%d/%m/%Y - %H:%M:%S"),
+            "response_time": round(response_time * 1000, 2) if response_time else None
+    }
 
-    return result
+    return Device(**result)
 

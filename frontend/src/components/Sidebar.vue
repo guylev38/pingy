@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { NFlex, NButton } from 'naive-ui';
-
 </script>
 
 <template>
@@ -17,7 +16,7 @@ import { NFlex, NButton } from 'naive-ui';
     .sidebar{
         padding: 20px;
         height: 100%;
-        width: 10vw;
+        width: 10%;
         border: 3px solid black;
     }
 </style>

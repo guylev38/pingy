@@ -9,11 +9,10 @@ type deviceCardProps = {
 }
 
 defineProps<deviceCardProps>()
-
 </script>
 
 <template>
-    <n-card :title="ip" size="medium" bordered>
+    <n-card :title="ip" size="small" bordered>
         <n-tag type="success" v-if="status === 'online'">Online</n-tag>
         <n-tag type="error" v-else>Offline</n-tag>
     </n-card>

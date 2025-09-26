@@ -1,1 +1,1 @@
-from backend.models.device import Device
+from backend.models.device import Device, DeviceStatus
