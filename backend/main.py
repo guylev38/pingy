@@ -15,14 +15,15 @@ from fastapi.responses import JSONResponse
 
 from backend.utils.ping import ping_device
 from backend.utils.loggers import (device_logger, system_logger)
-from backend.utils.device_db import (DeviceDatabase, DeviceAlreadyExistsError, DeviceNotFoundError)
+from backend.database import MongoManager
+from backend.errors import (DeviceAlreadyExistsError, DeviceNotFoundError)
 from backend.models import Device
 
 
 # ----- Globals ----- #
 
 app = FastAPI()
-db = DeviceDatabase("db.json")
+db = MongoManager("db.json")
 
 # ----- Consts ----- #
 

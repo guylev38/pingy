@@ -10,12 +10,6 @@ Date: 23/09/2025
 from enum import Enum
 from pathlib import Path
 
-# ----- Enums ----- #
-
-class DeviceStatus(Enum):
-    OFFLINE = False
-    ONLINE = True
-
 # ----- Consts ------ #
 
 # Loggers 
