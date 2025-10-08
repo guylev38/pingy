@@ -1,27 +1,29 @@
-<script setup lang="ts">
-/*
-  App.vue for Pingy.
-
-  Author: guylev38
-  Date: 24/09/2025
-*/
-
-import { ref } from "vue";
-import type { GlobalTheme } from "naive-ui";
-import { NFlex, NConfigProvider } from "naive-ui";
-import Devices from "./components/Devices.vue"
-import Sidebar from "./components/Sidebar.vue"
-
-const theme = ref<GlobalTheme | null>(null)
-
-</script>
-
 <template>
-  <n-config-provider :theme="theme" style="height: 100%; width: 100%">
-    <n-flex class="app-root" :wrap="false" style="height: 100%; width: 100%;">
-      <Sidebar></Sidebar>
-      <Devices></Devices>
-    </n-flex>
-  </n-config-provider>
+  <q-layout view="hHh lpR fFf">
+    <Header @toggle-left-drawer="toggleLeftDrawer"/>
+
+    <LeftSidebar v-model="leftDrawerOpen"/>
+    <RightSidebar />
+
+    <DeviceGrid />
+
+  </q-layout>
 </template>
 
+<script setup lang="ts">
+
+import { ref } from "vue"
+import Header from "./components/Header.vue"
+import LeftSidebar from "./components/LeftSidebar.vue"
+import RightSidebar from "./components/RightSidebar.vue"
+import DeviceGrid from "./components/DeviceGrid.vue"
+
+const leftDrawerOpen = ref(true)
+
+function toggleLeftDrawer(){
+  leftDrawerOpen.value = !leftDrawerOpen.value
+}
+</script>
+
+<style>
+</style>

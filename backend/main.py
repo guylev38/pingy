@@ -8,13 +8,12 @@ Date: 23/09/2025
 # ----- Imports ----- #
 
 import asyncio
-from typing import Any
 
-from fastapi import FastAPI, Form, Response
+from fastapi import FastAPI, Response
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from backend.utils.ping import ping_device
-from backend.utils.loggers import (device_logger, system_logger)
 from backend.database import DBManager
 from backend.models import Device
 from backend.errors.database_errors import DeviceAlreadyExistsError, DeviceNotFoundError
@@ -25,19 +24,34 @@ from backend.errors.database_errors import DeviceAlreadyExistsError, DeviceNotFo
 app = FastAPI()
 db = DBManager()
 
+
 # ----- Consts ----- #
 
 TIMEOUT = 1
+ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173"
+]
+
+# ----- Config ----- #
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 # ----- Functions ----- #
 
 
-@app.get("/")
+@app.get("/api")
 async def root():
     return {"message": "Welcome to Pingy!"}
 
 
-@app.get("/status")
+@app.get("/api/status")
 async def status(response: Response) -> list[Device]:
     devices = await db.get_devices()
     ping_tasks = [ping_device(device.ip, TIMEOUT) for device in devices] 
@@ -55,12 +69,12 @@ async def status(response: Response) -> list[Device]:
     return ping_results
 
 
-@app.get("/devices")
+@app.get("/api/devices")
 async def devices() -> list[Device]:
     return await db.get_devices()
 
 
-@app.post("/add_device", response_class=JSONResponse)
+@app.post("/api/add_device", response_class=JSONResponse)
 async def add_device(device: Device):
     try: 
         await db.add_devices([device])
@@ -68,7 +82,7 @@ async def add_device(device: Device):
     except DeviceAlreadyExistsError:
         return JSONResponse(content={"message": "DeviceAlreadyExistsError"}, status_code=409)
 
-@app.post("/delete_device", response_class=JSONResponse)
+@app.post("/api/delete_device", response_class=JSONResponse)
 async def delete_device(device: Device):
     try: 
         await db.delete_devices([device])
