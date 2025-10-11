@@ -31,7 +31,7 @@ class DeviceStatus(enum.Enum):
 
 class Device(BaseModel):
     ip: str 
-    status: bool = DeviceStatus.OFFLINE.value
+    status: bool | None = None
     last_checked: Optional[str] = None
     response_time: Optional[float] = None
     id: ObjectId = Field(default=None, alias="_id")

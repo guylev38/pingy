@@ -9,10 +9,11 @@ Date: 23/09/2025
 
 import asyncio
 
-from fastapi import FastAPI, Response
+from fastapi import FastAPI, Response, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
+from backend.utils.loggers import system_logger
 from backend.utils.ping import ping_device
 from backend.database import DBManager
 from backend.models import Device
@@ -32,6 +33,11 @@ ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173"
 ]
+
+CODE_OK = 200
+CODE_NOT_FOUND = 404
+CODE_CONFLICT = 409
+
 
 # ----- Config ----- #
 
@@ -61,11 +67,11 @@ async def status(response: Response) -> list[Device]:
     try:
         await db.update_devices(ping_results)
     except DeviceNotFoundError:
-        response.status_code = 404
+        response.status_code = CODE_NOT_FOUND
         response.body = {"message": "DeviceNotFoundError"}
         return []
 
-    response.status_code = 200 
+    response.status_code = CODE_OK
     return ping_results
 
 
@@ -73,19 +79,21 @@ async def status(response: Response) -> list[Device]:
 async def devices() -> list[Device]:
     return await db.get_devices()
 
-
 @app.post("/api/add_device", response_class=JSONResponse)
-async def add_device(device: Device):
+async def add_device(request: Request, device: Device):
+    system_logger.info(f"Got {request.body}")
     try: 
         await db.add_devices([device])
-        return JSONResponse(content={"message": "Device Added Successfully"}, status_code=200)
+        return JSONResponse(content={"message": "Device Added Successfully"}, status_code=CODE_OK)
     except DeviceAlreadyExistsError:
-        return JSONResponse(content={"message": "DeviceAlreadyExistsError"}, status_code=409)
+        return JSONResponse(content={"message": "DeviceAlreadyExistsError"}, status_code=CODE_CONFLICT)
+
 
 @app.post("/api/delete_device", response_class=JSONResponse)
-async def delete_device(device: Device):
+async def delete_device(request: Request, device: Device):
+    system_logger.info(f"Got {request.body}")
     try: 
         await db.delete_devices([device])
-        return JSONResponse(content={"message": "Device Removed Successfully!"}, status_code=200)
+        return JSONResponse(content={"message": "Device Removed Successfully!"}, status_code=CODE_OK)
     except DeviceNotFoundError:
-        return JSONResponse(content={"message": "DeviceNotFoundError"}, status_code=404)
+        return JSONResponse(content={"message": "DeviceNotFoundError"}, status_code=CODE_NOT_FOUND)
