@@ -34,7 +34,7 @@ const devices = ref<IDevice[]>([])
 const loading = ref(true)
 const isPingResultsOpen = ref(false)
 
-const offlineDevices = computed(() => devices.value.filter(d => d!.status))
+const offlineDevices = computed(() => devices.value.filter(d => d.status == false))
 
 function closePingResults(){
     isPingResultsOpen.value = false

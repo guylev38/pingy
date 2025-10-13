@@ -78,10 +78,11 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
-import { ref, } from 'vue';
+import { onMounted, onUnmounted, ref, } from 'vue';
 import type IDevice from '../device';
 
 const $q = useQuasar()
+const INTERVAL_DURATION = 180000 // 5 Minutes
 
 const showSidebar = defineModel<boolean>({ required: true })
 const isPingInProgress = ref(false)
@@ -95,6 +96,8 @@ const newDevice = ref<IDevice>({
 
 const startIp = ref<string>('')
 const endIp = ref<string>('')
+
+let intervalId: number | undefined
 
 async function startPing(){
     isPingInProgress.value = true
@@ -131,7 +134,6 @@ async function addDeviceButton(){
             message: "Failed to add device"
         })
     }
-
 }
 
 async function addDeviceBulk(){
@@ -157,5 +159,15 @@ async function addDeviceBulk(){
 
     isAddingDevices.value = false
 }
+
+onMounted(() => {
+    intervalId = window.setInterval(async () => {
+        await startPing()
+    }, INTERVAL_DURATION)
+})
+
+onUnmounted(() => {
+    if(intervalId) clearInterval(intervalId)
+})
  
 </script>
