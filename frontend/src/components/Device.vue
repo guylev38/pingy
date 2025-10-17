@@ -1,40 +1,3 @@
-<script setup lang="ts">
-import type IDevice from '../device'
-import { ref } from 'vue'
-import { useQuasar } from 'quasar'
-
-const $q = useQuasar()
-
-const confirmDeleteDevice = ref(false)
-
-const deviceProp = defineProps<{device: IDevice}>()
-delete deviceProp.device._id;
-
-async function deleteDevice() {
-    try{
-        const res = await fetch("http://127.0.0.1:8000/api/delete_device", {
-            method: "POST",
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(deviceProp.device)
-        })
-
-        if (!res.ok) throw new Error("Failed to delete device " + deviceProp.device.ip)
-
-        window.location.reload()
-    } catch(err){
-        $q.notify(
-            {
-                type: "negative",
-                message: "Failed to delete device " + deviceProp.device.ip
-            }
-        )
-    } finally {
-        confirmDeleteDevice.value = false
-    }
-}
-
-</script>
-
 <template>
    <q-card>
         <q-card-section>
@@ -63,3 +26,40 @@ async function deleteDevice() {
         </q-card-actions>
    </q-card> 
 </template>
+
+<script setup lang="ts">
+import type IDevice from '../device'
+import { ref } from 'vue'
+import { useQuasar } from 'quasar'
+
+const $q = useQuasar()
+
+const confirmDeleteDevice = ref(false)
+
+const deviceProp = defineProps<{device: IDevice}>()
+delete deviceProp.device._id;
+
+async function deleteDevice() {
+    try{
+        const res = await fetch("http://127.0.0.1:8000/api/delete_device", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(deviceProp.device)
+        })
+
+        if (!res.ok) throw new Error("Failed to delete device " + deviceProp.device.ip)
+
+        window.location.reload()
+    } catch(err: any){
+        const error = err as Error
+        $q.notify(
+            {
+                type: "negative",
+                message: error.message
+            }
+        )
+    } finally {
+        confirmDeleteDevice.value = false
+    }
+}
+</script>
