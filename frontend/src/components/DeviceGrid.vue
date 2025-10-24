@@ -29,7 +29,7 @@ import { ref, defineProps } from 'vue';
 import type IDevice from '../device';
 import Device from './Device.vue';
 
-const loading = ref(true);
+const loading = ref(false);
 
-const devices = defineProps<IDevice[]>();
+const props = defineProps<{ devices: IDevice[] }>();
 </script>

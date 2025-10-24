@@ -1,13 +1,20 @@
 <template>
     <q-drawer v-model="modelValue" side="right" bordered overlay>
-        <q-btn
-            icon="close"
-            flat
-            dense
-            round
-            @click="$emit('toggle-ping-results')"
-        />
-        <div style="text-align: center; padding: 20px" class="text-h5">
+        <div
+            class="text-h5"
+            v-if="offlineDevices.length == 0"
+            style="text-align: center; padding: 10px"
+            color="neutral"
+        >
+            No Offline Devices!
+            <br></br>
+            <q-icon name="celebration" size="2em"></q-icon>
+        </div>
+        <div
+            v-if="offlineDevices.length > 0"
+            style="text-align: center; padding: 20px"
+            class="text-h5"
+        >
             Ping Results
             <q-badge
                 style="text-align: center; padding: 10px"
@@ -15,7 +22,7 @@
                 >{{ offlineDevices[0]?.last_checked }}</q-badge
             >
         </div>
-        <q-list>
+        <q-list v-if="offlineDevices.length > 0">
             <q-item-label header>Offline Devices</q-item-label>
 
             <q-item v-for="device in offlineDevices" :key="device.ip">

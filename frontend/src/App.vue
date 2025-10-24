@@ -5,12 +5,17 @@
             @toggle-ping-results="togglePingResults"
         />
 
-        <LeftSidebar v-model="leftDrawerOpen" @add-device="addDevice" />
-        <DeviceGrid />
+        <LeftSidebar
+            v-model="leftDrawerOpen"
+            @add-device="toggleAddDeviceDialog"
+        />
+        <DeviceGrid :devices="devices" />
         <PingResults
             v-model="showPingResults"
             :offline-devices="offlineDevices"
         />
+
+        <AddDeviceDialog v-model="showAddDeviceDialog" />
     </q-layout>
 </template>
 
@@ -20,6 +25,7 @@ import Header from './components/Header.vue';
 import LeftSidebar from './components/LeftSidebar.vue';
 import DeviceGrid from './components/DeviceGrid.vue';
 import PingResults from './components/PingResults.vue';
+import AddDeviceDialog from './components/modals/AddDeviceDialog.vue';
 import type IDevice from './device';
 
 const leftDrawerOpen = ref(true);
@@ -28,6 +34,7 @@ const devices = ref<IDevice[]>([]);
 const offlineDevices = computed(() =>
     devices.value.filter((d) => d.status == false)
 );
+const showAddDeviceDialog = ref(false);
 const newDevice = ref<IDevice>({ ip: '' });
 
 function toggleLeftDrawer() {
@@ -36,6 +43,10 @@ function toggleLeftDrawer() {
 
 function togglePingResults() {
     showPingResults.value = !showPingResults.value;
+}
+
+function toggleAddDeviceDialog() {
+    showAddDeviceDialog.value = !showAddDeviceDialog.value;
 }
 
 async function startPing() {}
