@@ -18,18 +18,26 @@
             v-else-if="!devices.length && !loading"
             class="text-center q-mt-lg"
         >
-            <q-icon name="devices_other" size="3em" color="grey"></q-icon>
+            <q-icon name="devices_other" size="5em" color="grey"></q-icon>
             <div class="text-grey q-mt-sm">No Devices Found</div>
         </div>
     </q-page-container>
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps } from 'vue';
-import type IDevice from '../device';
+import { ref, watch } from 'vue';
+import type IDevice from '../types/device';
 import Device from './Device.vue';
 
 const loading = ref(false);
 
 const props = defineProps<{ devices: IDevice[] }>();
+const devices = ref<IDevice[]>([]);
+
+watch(
+    () => props.devices,
+    () => {
+        devices.value = props.devices;
+    }
+);
 </script>

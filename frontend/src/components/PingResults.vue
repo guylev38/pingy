@@ -1,14 +1,12 @@
 <template>
-    <q-drawer v-model="modelValue" side="right" bordered overlay>
+    <q-drawer v-model="togglePingResultValue" side="right" bordered overlay>
         <div
             class="text-h5"
             v-if="offlineDevices.length == 0"
-            style="text-align: center; padding: 10px"
+            style="text-align: center; padding: 15px"
             color="neutral"
         >
-            No Offline Devices!
-            <br></br>
-            <q-icon name="celebration" size="2em"></q-icon>
+            No Offline Devices
         </div>
         <div
             v-if="offlineDevices.length > 0"
@@ -38,13 +36,12 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineModel, defineEmits } from 'vue';
-import type Device from '../device.ts';
+import type Device from '../types/device.ts';
 
 defineProps<{
     offlineDevices: Device[];
 }>();
 
-const emit = defineEmits(['toggle-ping-results']);
-const modelValue = defineModel<boolean>({ required: true });
+const togglePingResultsEvent = defineEmits(['toggle-ping-results']);
+const togglePingResultValue = defineModel<boolean>({ required: true });
 </script>

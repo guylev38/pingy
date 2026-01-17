@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import type IDevice from '../device';
+import type IDevice from '../types/device';
 import { ref } from 'vue';
 import { useQuasar } from 'quasar';
 
