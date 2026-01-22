@@ -8,7 +8,6 @@ Date: 26/09/2025
 # ----- Imports ----- #
 
 import abc
-from typing import Optional
 
 from backend.models import Device
 
@@ -52,7 +51,7 @@ class AbstractDatabaseManager(abc.ABC):
 
 
     @abc.abstractmethod
-    async def get_devices(self, devices: Optional[list[Device]] = None) -> list[Device]: 
+    async def get_devices(self, devices: list[Device] | None = None) -> list[Device]: 
         """
         Get devices from the database.
 

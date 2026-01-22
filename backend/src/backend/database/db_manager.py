@@ -7,8 +7,6 @@ Date: 24/09/2025
 
 # ----- Imports ----- #
 
-from typing import Optional
-
 from pymongo.asynchronous.mongo_client import AsyncMongoClient 
 from pymongo.errors import DuplicateKeyError
 
@@ -88,7 +86,7 @@ class DBManager(AbstractDatabaseManager):
             system_logger.info(f"Device {device.ip} database entry updated successfully!")
 
 
-    async def get_devices(self, devices: Optional[list[Device]] = None) -> list[Device]:  
+    async def get_devices(self, devices: list[Device] | None = None) -> list[Device]:  
         queried_devices: list[Device] = []
 
         if devices is None:
@@ -102,6 +100,6 @@ class DBManager(AbstractDatabaseManager):
                 system_logger.error(f"Device {device.ip} not found in database") 
                 raise DeviceNotFoundError
 
-            queried_devices.append(Device(**find_result))
+            queried_devices.append(Device.model_validate(find_result))
 
         return queried_devices

@@ -31,7 +31,7 @@ import DeviceGrid from './components/DeviceGrid.vue';
 import PingResults from './components/PingResults.vue';
 import AddDeviceDialog from './components/modals/AddDeviceDialog.vue';
 import { sendPOSTCommand, sendGETCommand } from './utils/api_utils';
-import type { GETCommands, POSTCommands } from './utils/api_utils';
+import { GETCommands, POSTCommands } from './utils/api_utils';
 import type IDevice from './types/device';
 import type IDeviceRange from './types/deviceRange';
 
@@ -41,7 +41,7 @@ const showAddDeviceDialog = ref(false);
 
 const devices = ref<IDevice[]>([]);
 const offlineDevices = computed(() =>
-    devices.value.filter((d) => d.status == false)
+    devices.value.filter((d) => d.status == false),
 );
 
 function toggleLeftDrawer() {
@@ -59,7 +59,8 @@ function toggleAddDeviceDialog() {
 async function startPing() {}
 
 async function addDeviceToGrid(newDevice: IDevice) {
-    devices.value.push(newDevice);
+    console.log('Adding new device');
+    await sendPOSTCommand(newDevice, POSTCommands.ADD);
 }
 
 async function addDeviceBulkToGrid(range: IDeviceRange) {
@@ -71,8 +72,9 @@ async function addDeviceBulkToGrid(range: IDeviceRange) {
 
 async function removeDevice() {}
 
-async function fetchDevices() {}
-
+async function fetchDevices() {
+    await sendGETCommand(GETCommands.DEVICES);
+}
 // Timer
 
 // Utils

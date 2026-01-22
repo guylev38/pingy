@@ -43,7 +43,7 @@
                         dense
                         label="Add"
                         v-close-popup
-                        type="submit"
+                        @click="submit"
                         color="primary"
                     ></q-btn>
                 </q-card-section>
@@ -62,7 +62,7 @@ const emits = defineEmits<{
     (e: 'range', data: IDeviceRange): void;
 }>();
 
-const group = ref('single');
+const group = ref<'single' | 'range'>('single');
 const ipAddress = ref('');
 const startAddress = ref('');
 const endAddress = ref('');
@@ -79,6 +79,14 @@ const options = [
         value: 'range',
     },
 ];
+
+function submit() {
+    if (group.value === 'single') {
+        submitSingle();
+    } else {
+        submitRange();
+    }
+}
 
 function submitSingle() {
     emits('single', { ip: ipAddress.value });

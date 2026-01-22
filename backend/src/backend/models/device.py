@@ -9,7 +9,6 @@ Date: 24/09/2025
 
 import enum
 import hashlib
-from typing import Optional
 
 from pydantic import BaseModel, Field, ConfigDict, model_validator 
 from bson.objectid import ObjectId
@@ -31,10 +30,10 @@ class DeviceStatus(enum.Enum):
 
 class Device(BaseModel):
     ip: str 
-    status: bool | None = None
-    last_checked: Optional[str] = None
-    response_time: Optional[float] = None
-    id: ObjectId = Field(default=None, alias="_id")
+    status: bool | None = DeviceStatus.OFFLINE.value
+    last_checked: str | None = None
+    response_time: float | None = None
+    id: ObjectId | None = Field(default=None, alias="_id")
 
     @model_validator(mode="before")
     @classmethod

@@ -13,7 +13,7 @@ import type IDevice from "../types/device"
 
 /***** Consts ******/
 
-const BASE_API_URL = "http://localhost:8000/api/"
+const BASE_API_URL = "http://127.0.0.1:8000/api/"
 
 export const POSTCommands = {
     ADD: "ADD",
@@ -62,8 +62,7 @@ export async function sendGETCommand(command: GETCommands): Promise<ApiResponse>
 export async function sendPOSTCommand(device: IDevice, action: POSTCommands): Promise<ApiResponse> {
 
     const endpoint = POST_ENDPOINTS[action];
-
-    const res = await fetch(`http://localhost:8000/api/${endpoint}`, {
+    const res = await fetch(`${BASE_API_URL}${endpoint}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
