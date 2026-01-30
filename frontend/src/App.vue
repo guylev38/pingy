@@ -8,6 +8,11 @@
         <LeftSidebar
             v-model="leftDrawerOpen"
             @add-device="toggleAddDeviceDialog"
+            @start-ping="
+                updateDevices(async () => {
+                    await startPing();
+                })
+            "
         />
         <DeviceGrid :devices="devices" />
         <PingResults
@@ -17,14 +22,22 @@
 
         <AddDeviceDialog
             v-model="showAddDeviceDialog"
-            @single="addDeviceToGrid"
-            @range="addDeviceBulkToGrid"
+            @single="
+                updateDevices(async (device) => {
+                    await addSingleDevice(device);
+                }, $event)
+            "
+            @multiple="
+                updateDevices(async (range) => {
+                    await addMultipleDevices(range);
+                }, $event)
+            "
         />
     </q-layout>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import Header from './components/Header.vue';
 import LeftSidebar from './components/LeftSidebar.vue';
 import DeviceGrid from './components/DeviceGrid.vue';
@@ -32,6 +45,7 @@ import PingResults from './components/PingResults.vue';
 import AddDeviceDialog from './components/modals/AddDeviceDialog.vue';
 import { sendPOSTCommand, sendGETCommand } from './utils/api_utils';
 import { GETCommands, POSTCommands } from './utils/api_utils';
+import type { ApiResponse } from './utils/api_utils';
 import type IDevice from './types/device';
 import type IDeviceRange from './types/deviceRange';
 
@@ -56,26 +70,52 @@ function toggleAddDeviceDialog() {
     showAddDeviceDialog.value = !showAddDeviceDialog.value;
 }
 
-async function startPing() {}
+async function startPing() {
+    await sendGETCommand(GETCommands.STATUS);
+}
 
-async function addDeviceToGrid(newDevice: IDevice) {
-    console.log('Adding new device');
+async function addSingleDevice(newDevice: IDevice | undefined) {
     await sendPOSTCommand(newDevice, POSTCommands.ADD);
 }
 
-async function addDeviceBulkToGrid(range: IDeviceRange) {
+async function addMultipleDevices(range: IDeviceRange | undefined) {
+    if (range === undefined) {
+        throw new Error('Undefined Range!');
+    }
+
     let start = getLastOctet(range.startAddress);
     let end = getLastOctet(range.endAddress);
 
-    for (let i = start; i <= end; i++) {}
+    const promises: Promise<ApiResponse>[] = [];
+
+    for (let i = start; i <= end; i++) {
+        const curr_ip = replaceLastOctet(range.startAddress, String(i));
+        promises.push(sendPOSTCommand({ ip: curr_ip }, POSTCommands.ADD));
+    }
+
+    await Promise.all(promises);
 }
 
-async function removeDevice() {}
+async function removeDevice(device: IDevice) {
+    await sendPOSTCommand(device, POSTCommands.DELETE);
+}
 
 async function fetchDevices() {
-    await sendGETCommand(GETCommands.DEVICES);
+    devices.value = await sendGETCommand(GETCommands.DEVICES);
 }
-// Timer
+
+async function updateDevices<T extends any[]>(
+    action: (...payload: T) => Promise<void>,
+    ...data: T
+): Promise<void> {
+    try {
+        await action(...data);
+    } catch (error) {
+        console.error('Mutation Failed: ', error);
+    } finally {
+        await fetchDevices();
+    }
+}
 
 // Utils
 function getLastOctet(ip: string): number {
@@ -87,6 +127,8 @@ function replaceLastOctet(ip: string, newOctet: string): string {
     parts[3] = newOctet;
     return parts.join('.');
 }
+
+onMounted(fetchDevices);
 </script>
 
 <style>

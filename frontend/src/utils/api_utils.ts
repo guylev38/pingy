@@ -37,7 +37,7 @@ const GET_ENDPOINTS: Record<GETCommands, string> = {
 
 /***** Types ******/
 
-type ApiResponse = {
+export type ApiResponse = {
     message: string
     status: number
 }
@@ -47,7 +47,7 @@ export type GETCommands = typeof GETCommands[keyof typeof GETCommands]
 
 /***** Functions ******/
 
-export async function sendGETCommand(command: GETCommands): Promise<ApiResponse> {
+export async function sendGETCommand(command: GETCommands): Promise<IDevice[]> {
     const endpoint = GET_ENDPOINTS[command];
 
     const res = await fetch(`${BASE_API_URL}${endpoint}`);
@@ -56,10 +56,12 @@ export async function sendGETCommand(command: GETCommands): Promise<ApiResponse>
         throw new Error(`/api/status: ${res.status}`)
     }
 
-    return res.json() as Promise<ApiResponse>
+    return res.json() as Promise<IDevice[]>
 }
 
-export async function sendPOSTCommand(device: IDevice, action: POSTCommands): Promise<ApiResponse> {
+export async function sendPOSTCommand(device: IDevice | undefined, action: POSTCommands): Promise<ApiResponse> {
+
+    if(device === undefined) throw new Error("Undefined Device!");
 
     const endpoint = POST_ENDPOINTS[action];
     const res = await fetch(`${BASE_API_URL}${endpoint}`, {

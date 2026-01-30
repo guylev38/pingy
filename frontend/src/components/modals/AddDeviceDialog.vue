@@ -10,7 +10,7 @@
                         ></q-input>
                     </q-form>
                 </q-card-section>
-                <q-card-section v-if="group == 'range'">
+                <q-card-section v-if="group == 'multiple'">
                     <q-form @submit.prevent="submitRange" ref="rangeForm">
                         <q-input
                             v-model="startAddress"
@@ -59,10 +59,10 @@ import type IDeviceRange from '../../types/deviceRange';
 
 const emits = defineEmits<{
     (e: 'single', data: IDevice): void;
-    (e: 'range', data: IDeviceRange): void;
+    (e: 'multiple', data: IDeviceRange): void;
 }>();
 
-const group = ref<'single' | 'range'>('single');
+const group = ref<'single' | 'multiple'>('single');
 const ipAddress = ref('');
 const startAddress = ref('');
 const endAddress = ref('');
@@ -76,7 +76,7 @@ const options = [
     },
     {
         label: 'Range of Devices',
-        value: 'range',
+        value: 'multiple',
     },
 ];
 
@@ -93,7 +93,7 @@ function submitSingle() {
 }
 
 function submitRange() {
-    emits('range', {
+    emits('multiple', {
         startAddress: startAddress.value,
         endAddress: endAddress.value,
     });

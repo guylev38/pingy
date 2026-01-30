@@ -57,7 +57,7 @@ async def root():
 
 
 @app.get("/api/status", response_class=JSONResponse)
-async def status(response: JSONResponse) -> list[Device]:
+async def status(response: JSONResponse):
     devices = await db.get_devices()
     ping_tasks = [ping_device(device.ip, TIMEOUT) for device in devices] 
 
@@ -69,13 +69,14 @@ async def status(response: JSONResponse) -> list[Device]:
         response = JSONResponse(content={"message": "DeviceNotFoundError"}, status_code=CODE_NOT_FOUND)
         return []
 
-    response.status_code = CODE_OK
-    return ping_results
+    response = JSONResponse(content={"message": "Status Checked Successfully!"}, status_code=CODE_OK)
+    return response
 
 
 @app.get("/api/devices")
 async def devices() -> list[Device]:
     return await db.get_devices()
+
 
 @app.post("/api/add_device", response_class=JSONResponse)
 async def add_device(request: Request, device: Device):
